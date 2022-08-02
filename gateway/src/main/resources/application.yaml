@@ -1,0 +1,41 @@
+server:
+  port: 80
+  servlet:
+    context-path: /${spring.application.name}
+spring:
+  application:
+    name: gateway
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    gateway:
+      routes:
+        - id: gateway-provider_1
+          uri: lb://USER-PROVIDER
+          predicates:
+            - Path=/gateway/user/**
+            # group1 是分组名， 8是权重值
+            - Weight=group1, 8
+          filters:
+            #去掉原始请求路径中的前一级路径，即/gateway
+            - StripPrefix=1
+#        - id: gateway-provider_2
+#          uri: http://localhost:9025
+#          predicates:
+#            - Path=/gateway/provider/**
+#            # group1 是分组名， 8是权重值
+#            - Weight=group1, 2
+#          filters:
+#            #去掉原始请求路径中的前一级路径，即/gateway
+#            - StripPrefix=1
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: gateway
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://114.132.233.244:1111/eureka/

@@ -1,0 +1,18 @@
+server:
+  port: 9001
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: user-provider
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: user-provider
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://114.132.233.244:1111/eureka/
